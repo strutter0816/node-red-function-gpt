@@ -1,5 +1,5 @@
 {
-  "name": "@supcon/node-red-function-gpt-with-memory",
+  "name": "node-red-function-gpt-with-memory",
   "version": "0.0.1",
   "description": "Variation of the standard Node-RED function node that includes an interface to ChatGPT with memory for writing into the function content.",
   "author": {
