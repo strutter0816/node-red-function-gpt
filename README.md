@@ -1,8 +1,9 @@
-# Node-RED Function Node with integrated ChatGPT
+# Node-RED Function Node with integrated ChatGPT With Memory, Multi-turn Conversations Support
 
-A Node-RED node that adds an "Ask ChatGPT" input and button to a duplicate of the built-in function node.
+The Code based on [@flowfuse/node-red-function-gpt](https://github.com/FlowFuse/node-red-function-gpt),Thanks for their contribution
 
-<img width="1728" alt="Screenshot 2023-04-21 at 16 08 47" src="https://user-images.githubusercontent.com/99246719/233671631-fefa36c1-6db4-4392-a057-314c16fd91b7.png">
+A Node-RED node that adds an "Ask ChatGPT(With Memory)" input and button to a duplicate of the built-in function node.
+![picture 1](images/b773216cb9e92964b9b64d1c1bb081bef3ff972ebe7bc91242f48b295087b966.png)
 
 ## Installation
 
@@ -12,7 +13,7 @@ To add the node to your own instance of Node-RED:
 1. Click "Manage palette"
 1. Select the "Install" tab
 1. Search "chatgpt"
-1. Install the `node-red-function-gpt` node
+1. Install the `node-red-function-gpt-with-memory` node
 
 You will need a [valid API Key from OpenAI](https://platform.openai.com/account/api-keys)
 
@@ -20,13 +21,13 @@ You will need a [valid API Key from OpenAI](https://platform.openai.com/account/
 
 ### Basic Example
 
-<img width="652" alt="Screenshot 2023-05-17 at 12 45 08" src="https://github.com/FlowFuse/node-red-function-gpt/assets/99246719/3684d81a-1591-4fe2-a632-dfa8e3a3af93">
+![picture 1](images/b773216cb9e92964b9b64d1c1bb081bef3ff972ebe7bc91242f48b295087b966.png)
 
 1. Add the Function GPT nodes to your editor
 2. Configure your ChatGPT credentials
 3. Deploy your nodes
 4. Open the function-gpt node
-5. Type your prompt into the text input at the bottom of the editor panel and click "Ask ChatGPT".
+5. Type your prompt into the text input at the bottom of the editor panel and click "Ask ChatGPT(With Memory)".
 
 ### New Features
 
@@ -38,6 +39,12 @@ The node now includes several enhanced features:
 2. **Multi-turn Conversations**: Support for multi-turn conversations with ChatGPT, enabling more complex and contextual interactions.
 3. **Improved User Experience**: After asking a question, the input field is automatically cleared for a smoother workflow.
 
+Basic example for memory
+
+![picture 2](images/54aa94dbff141e678cd5802091e484c32add4cbf1abc75c317765d365c630996.png)
+GPT can remember what I said before  
+![picture 3](images/c34b043274e9aee3faf8b9d674e822c516321ddfaf01b3f3408e68ed05fa4b50.png)
+
 ### Inline Prompts
 
 If you want to inject code into already written content, you can write an inline prompt. These prompts are written as comments, e.g.:
@@ -46,9 +53,9 @@ If you want to inject code into already written content, you can write an inline
 //$PROMPT: Double the input
 ```
 
-If you've configured Node-RED to use the "Monaco" editor, this will then show an "Ask ChatGPT" hyperlink above the inserted comment, that you can click to ask this to ChatGPT.
+If you've configured Node-RED to use the "Monaco" editor, this will then show an "Ask ChatGPT(With Memory)" hyperlink above the inserted comment, that you can click to ask this to ChatGPT.
 
-<img width="266" alt="Screenshot 2023-05-17 at 12 43 51" src="https://github.com/FlowFuse/node-red-function-gpt/assets/99246719/cc16e946-ad78-4f68-99f2-ae35898c55c2">
+![picture 5](images/97ee2535954da7614cbec359e82fc209340836204e04552e0c69c82526b62f6d.png)
 
 You can have as many of these within the function node as you like.
 
