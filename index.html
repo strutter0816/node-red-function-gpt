@@ -91,6 +91,15 @@
     <ul style="min-width: 600px; margin-bottom: 20px;" id="func-tabs"></ul>
   </div>
   <div id="func-tabs-content" style="min-height: calc(100% - 165px);">
+    <div id="func-tab-history" style="display:none">
+      <div class="form-row">
+        <!-- <label>Conversation History</label> -->
+        <pre
+          id="function-gpt-history-content"
+          style="height:450px;overflow:auto;background:#f5f5f5"
+        ></pre>
+      </div>
+    </div>
     <div id="func-tab-config" style="display:none">
       <div class="form-row">
         <label for="node-input-outputs"
@@ -187,7 +196,7 @@
       id="chatgpt-ask"
       class="ui-button ui-widget ui-corner-all primary"
       type="button"
-      value="Ask ChatGPT(With Memory)"
+      value="Ask LLM(With Memory)"
       disabled
     />
     <i
@@ -637,6 +646,16 @@
             $("#func-tabs-content").children().hide();
             $("#" + tab.id).show();
 
+            // 自动刷新 Show History tab
+            if (tab.id === "func-tab-history") {
+              var nodeId = node.id; // 当前节点ID
+              $.get("/function-gpt/history/" + nodeId, function (history) {
+                $("#function-gpt-history-content").text(
+                  JSON.stringify(history, null, 2)
+                );
+              });
+            }
+
             if (tab.id === "func-tab-config") {
               $("#func-tab-chatgpt").hide();
             } else {
@@ -662,6 +681,10 @@
               restorePrompt();
             }
           },
+        });
+        tabs.addTab({
+          id: "func-tab-history",
+          label: "Show History",
         });
         tabs.addTab({
           id: "func-tab-config",
@@ -933,6 +956,11 @@
                 RED.notify("Success.", { type: "success" });
                 // Clear the input field after successful request
                 $("#chatgpt-input").val("");
+                const ed = getCurrentEditor();
+                if (ed && ed.__stateId) {
+                  const key = ed.__stateId + "-gpt-prompt";
+                  localStorage.setItem(key, "");
+                }
                 let content = response.choices[0].message.content;
                 // remove any non code
                 if (hasCodeFence(content)) {
@@ -1159,7 +1187,7 @@
                     const prompt = line.replace(/\/\/\$PROMPT: /, "");
                     const command = {
                       id: "execute-prompt",
-                      title: "Ask ChatGPT(With Memory)",
+                      title: "Ask LLM(With Memory)",
                       arguments: [prompt, range, false, false], // false = dont replace all, false = dont return the msg
                     };
                     lenses.push({

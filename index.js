@@ -587,9 +587,20 @@ module.exports = function (RED) {
               config.model = req.body.config.model;
             }
           }
+          const flowContext = node.context().flow;
+          const flowKeys = flowContext.keys();
+          let flowInfo = "";
+          flowKeys.forEach((key) => {
+            const value = flowContext.get(key);
+            flowInfo += `"${key}": ${JSON.stringify(value)}\n`;
+          });
+          const userPrompt = req.body.prompt || "";
+          const fullPrompt = `#Current Node-RED Flow Context:\n${flowInfo}\n# User Prompt:\n${userPrompt}`;
+          // console.log("fullPrompt\n", fullPrompt);
           // askGPT = function async(prompt, config, returnMsg = true)
           const response = await node.openAiConfigIdNode.askGPT(
-            req.body.prompt,
+            // req.body.prompt,
+            fullPrompt,
             // TODO: use the node id
             req.params.id,
             config,

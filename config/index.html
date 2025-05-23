@@ -7,16 +7,17 @@
     },
     defaults: {
       name: {
-        value: "GPT Config",
+        value: "LLM Config",
         required: true,
       },
       model: {
         value: "gpt-3.5-turbo",
         required: true,
       },
+      provider: { value: "openai", required: true },
     },
     label: function () {
-      return this.name || "ChatGPT Config";
+      return this.name || "LLM Config";
     },
   });
 </script>
@@ -27,6 +28,16 @@
       ><i class="fa fa-bookmark"></i> Name</label
     >
     <input type="text" id="node-config-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-provider">
+      <i class="fa fa-server"></i> Provider
+    </label>
+    <select id="node-config-input-provider">
+      <option value="openai" selected>OpenAI</option>
+      <option value="deepseek">Deepseek</option>
+      <option value="gemini">Gemini</option>
+    </select>
   </div>
   <div class="form-row">
     <label for="node-config-input-orgid"
@@ -52,28 +63,30 @@
   <p>Configure the input ChatGPT API.</p>
   <h3>Properties</h3>
   <dl class="message-properties">
+    <dt>Provider <span class="property-type">string</span></dt>
+    <dd>Choose the LLM provider (OpenAI, Deepseek, Gemini)</dd>
     <dt>Org ID <span class="property-type">string</span></dt>
     <dd>
-      You can retreive your OpenAI Org ID from
+      You can Input your LLM Org ID from like
       <a href="https://platform.openai.com/account/org-settings" target="_blank"
-        >here.</a
+        >openai.org</a
       >
     </dd>
     <dt>API Key <span class="property-type">string</span></dt>
     <dd>
-      You can retreive your OpenAI API key from
+      You can retreive your LLM API key from like
       <a href="https://platform.openai.com/account/api-keys" target="_blank"
-        >here.</a
+        >openai.api</a
       >
     </dd>
     <dt>Model <span class="property-type">string</span></dt>
     <dd>
-      You can see a full list of available models
+      You can see a full list of available models like
       <a
         href="
             https://platform.openai.com/docs/models"
         target="_blank"
-        >here</a
+        >openai.model</a
       >.
     </dd>
   </dl>

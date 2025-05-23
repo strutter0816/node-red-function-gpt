@@ -3,8 +3,19 @@ const Emitter = require("events").EventEmitter;
 
 module.exports = function (RED) {
   const emitter = new Emitter();
-  const conversionHistory = new Map(); // store history of conversions in the current session
+  const conversionHistory = new Map(); // store history of conversions in the current node
 
+  function getBaseURLByProvider(provider) {
+    switch (provider) {
+      case "deepseek":
+        return "https://api.deepseek.com/v1";
+      case "gemini":
+        return "https://generativelanguage.googleapis.com/v1beta/openai/";
+      case "openai":
+      default:
+        return "https://api.openai.com/v1";
+    }
+  }
   function ChatGPTModelConfigNode(n) {
     const node = this;
 
@@ -12,11 +23,14 @@ module.exports = function (RED) {
 
     // Expose the emitter so that nodes can subscribe to the 'error' & 'connected' events
     node.emitter = emitter;
-    node.conversionHistory = conversionHistory;
+    // node.conversionHistory = conversionHistory;
     // setup the openAi API
+    node.provider = n.provider || "openai";
+    const baseURL = getBaseURLByProvider(node.provider);
     const configuration = {
       organization: node.credentials.orgid,
       apiKey: node.credentials.apikey,
+      baseURL: baseURL,
     };
     node.openAIApi = new OpenAIApi(configuration);
     node.model = n.model;
@@ -45,10 +59,10 @@ module.exports = function (RED) {
       node.log("Current nodeId: " + nodeId);
 
       // get or initalize the history for this node
-      if (!node.conversionHistory.has(nodeId)) {
-        node.conversionHistory.set(nodeId, []);
+      if (!conversionHistory.has(nodeId)) {
+        conversionHistory.set(nodeId, []);
       }
-      const history = node.conversionHistory.get(nodeId);
+      const history = conversionHistory.get(nodeId);
 
       const systemMessage =
         `Always respond with content for a Node-RED function node, always use const or let instead of var` +
@@ -85,9 +99,8 @@ module.exports = function (RED) {
         { role: "user", content: prompt },
         { role: "assistant", content: response.choices[0].message.content }
       );
-
       node.on("close", async function (done) {
-        node.conversionHistory.delete(nodeId);
+        conversionHistory.delete(nodeId);
         node.openAIApi = null;
         done();
       });
@@ -95,7 +108,19 @@ module.exports = function (RED) {
       return response;
     };
   }
-
+  RED.httpAdmin.get(
+    "/function-gpt/history/:id",
+    RED.auth.needsPermission("function-gpt.read"),
+    function (req, res) {
+      // console.log("get history", req.params.id);
+      const nodeId = req.params.id;
+      if (conversionHistory && conversionHistory.has(nodeId)) {
+        res.json(conversionHistory.get(nodeId));
+      } else {
+        res.json([]);
+      }
+    }
+  );
   RED.nodes.registerType("chatgpt-config", ChatGPTModelConfigNode, {
     credentials: {
       apikey: { type: "text" },
