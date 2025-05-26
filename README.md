@@ -29,9 +29,11 @@ You will need a [valid API Key from OpenAI](https://platform.openai.com/account/
 4. Open the function-gpt node
 5. Type your prompt into the text input at the bottom of the editor panel and click "Ask ChatGPT(With Memory)".
 
-### New Features
+## New Features
 
 Contributed by [Zhou Xingyu](https://github.com/strutter0816)
+
+### Add Memory
 
 The node now includes several enhanced features:
 
@@ -44,6 +46,25 @@ Basic example for memory
 ![picture 2](images/54aa94dbff141e678cd5802091e484c32add4cbf1abc75c317765d365c630996.png)
 GPT can remember what I said before  
 ![picture 3](images/c34b043274e9aee3faf8b9d674e822c516321ddfaf01b3f3408e68ed05fa4b50.png)
+
+### Support More LLMs (DeepSeek and Gemini) (Default: OpenAI)
+
+You can select your preferred LLM provider, enter your API key, and choose a specific LLM model as needed.
+![picture 8](images/6bf62f538590289e401b8e8865854973e2244b025e66936d1541af86c15681b2.png)
+
+### Show Conversation History
+
+You can view the complete conversation history between the user and the LLM in a dedicated tab. This helps you track previous prompts and responses for better context and debugging.
+
+![picture 9](images/e3c59e3a5ad11a79843844ec058dd5dd7380f766ecbc2c8439c448b1b8c8d729.png)
+
+### Add flow context for the node
+
+The node can automatically access and include the current flow context in each LLM request. This allows you to provide additional contextual information from your Node-RED flow, enabling more dynamic and intelligent responses.
+
+![picture 10](images/3598a99dacfc79005d4ed6eb62784b65a3ea33a756661d8246c183b681f8e4ee.png)
+
+![picture 11](images/e4fb897f365e0a3e68ca4e91df3c59e87fa7ddf51a8f9acebb6c9098eba87ac6.png)
 
 ### Inline Prompts
 

@@ -595,7 +595,9 @@ module.exports = function (RED) {
             flowInfo += `"${key}": ${JSON.stringify(value)}\n`;
           });
           const userPrompt = req.body.prompt || "";
-          const fullPrompt = `#Current Node-RED Flow Context:\n${flowInfo}\n# User Prompt:\n${userPrompt}`;
+          let fullPrompt = `#Current Node-RED Flow Context:\n${
+            flowInfo.trim() ? flowInfo : "None"
+          }\n#User Prompt:\n${userPrompt}`;
           // console.log("fullPrompt\n", fullPrompt);
           // askGPT = function async(prompt, config, returnMsg = true)
           const response = await node.openAiConfigIdNode.askGPT(

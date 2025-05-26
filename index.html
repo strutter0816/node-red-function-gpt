@@ -94,10 +94,26 @@
     <div id="func-tab-history" style="display:none">
       <div class="form-row">
         <!-- <label>Conversation History</label> -->
-        <pre
+        <!-- JSON Format -->
+        <!-- <pre
           id="function-gpt-history-content"
           style="height:450px;overflow:auto;background:#f5f5f5"
-        ></pre>
+        ></pre> -->
+        <!-- Table Format -->
+        <div style="max-height:300px;overflow:auto;">
+          <table
+            id="function-gpt-history-table"
+            style="width:100%;background:#f5f5f5;table-layout:fixed;word-break:break-all;"
+          >
+            <thead>
+              <tr>
+                <th style="width:20%;">Role</th>
+                <th>Content</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div id="func-tab-config" style="display:none">
@@ -646,14 +662,55 @@
             $("#func-tabs-content").children().hide();
             $("#" + tab.id).show();
 
-            // 自动刷新 Show History tab
+            // auto refresh Show History tab
             if (tab.id === "func-tab-history") {
-              var nodeId = node.id; // 当前节点ID
+              var nodeId = node.id; // current node ID
               $.get("/function-gpt/history/" + nodeId, function (history) {
-                $("#function-gpt-history-content").text(
-                  JSON.stringify(history, null, 2)
-                );
+                // $("#function-gpt-history-content").text(
+                //   JSON.stringify(history, null, 2)
+                // );
+                var $tbody = $("#function-gpt-history-table tbody");
+                $tbody.empty();
+                if (history && history.length > 0) {
+                  for (let i = 0; i < history.length; i++) {
+                    const item = history[i];
+                    let contentHtml = escapeHtml(item.content);
+                    // assistant reply and content like code block
+                    if (
+                      item.role === "assistant" &&
+                      /^```/.test(item.content.trim())
+                    ) {
+                      // remove markdown code block
+                      contentHtml = contentHtml
+                        .replace(/^```[a-zA-Z]*\n?/, "")
+                        .replace(/```$/, "");
+                      contentHtml = `<pre style="padding:8px;border-radius:4px;overflow:auto;"><code>${contentHtml}</code></pre>`;
+                    } else if (item.role === "assistant") {
+                      // normal assistant reply also use <pre> to keep format
+                      contentHtml = `<pre style="padding:8px;border-radius:4px;overflow:auto;">${contentHtml}</pre>`;
+                    }
+                    const row = `<tr>
+                      <td style="color:${
+                        item.role === "user" ? "#1976d2" : "#388e3c"
+                      };font-weight:bold;">${item.role}</td>
+                      <td>${contentHtml}</td>
+                    </tr>`;
+                    $tbody.append(row);
+                  }
+                } else {
+                  $tbody.append(
+                    '<tr><td colspan="2" style="text-align:center;color:#aaa;">No history</td></tr>'
+                  );
+                }
               });
+            }
+            function escapeHtml(text) {
+              return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
             }
 
             if (tab.id === "func-tab-config") {
