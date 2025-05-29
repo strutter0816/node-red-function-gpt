@@ -100,7 +100,7 @@
           style="height:450px;overflow:auto;background:#f5f5f5"
         ></pre> -->
         <!-- Table Format -->
-        <div style="max-height:300px;overflow:auto;">
+        <div style="max-height:45vh;overflow:auto;">
           <table
             id="function-gpt-history-table"
             style="width:100%;background:#f5f5f5;table-layout:fixed;word-break:break-all;"
@@ -672,6 +672,7 @@
                 var $tbody = $("#function-gpt-history-table tbody");
                 $tbody.empty();
                 if (history && history.length > 0) {
+                  console.log("history\n", history);
                   for (let i = 0; i < history.length; i++) {
                     const item = history[i];
                     let contentHtml = escapeHtml(item.content);

@@ -1,6 +1,6 @@
 const OpenAIApi = require("openai");
 const Emitter = require("events").EventEmitter;
-
+const { USER_PROMPT, FLOW_CONTEXT } = require("../constants");
 module.exports = function (RED) {
   const emitter = new Emitter();
   const conversionHistory = new Map(); // store history of conversions in the current node
@@ -95,8 +95,20 @@ module.exports = function (RED) {
         model: _model,
         messages: message,
       });
+
+      let userPromptOnly = prompt;
+      if (
+        prompt &&
+        prompt.includes(USER_PROMPT) &&
+        prompt.includes(FLOW_CONTEXT)
+      ) {
+        const start = prompt.indexOf(USER_PROMPT) + USER_PROMPT.length;
+        const end = prompt.indexOf(FLOW_CONTEXT, start);
+        userPromptOnly = prompt.slice(start, end).trim();
+      }
       history.push(
-        { role: "user", content: prompt },
+        // only push user prompt to history, not the full prompt
+        { role: "user", content: userPromptOnly },
         { role: "assistant", content: response.choices[0].message.content }
       );
       node.on("close", async function (done) {

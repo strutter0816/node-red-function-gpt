@@ -4,7 +4,7 @@
  **/
 
 const { OpenAIApi } = require("openai");
-
+const { USER_PROMPT, FLOW_CONTEXT } = require("./constants");
 module.exports = function (RED) {
   "use strict";
 
@@ -552,6 +552,17 @@ module.exports = function (RED) {
         node.error(RED._("function.error.externalModuleLoadError"));
       });
   }
+  // get the flow.json from the admin API
+  async function getFlowJson() {
+    const host = RED.settings.uiHost || "localhost";
+    const port = RED.settings.uiPort || 1880;
+    const url = "http://" + host + ":" + port + "/flows";
+    // const headers = { 'Authorization': 'Bearer <your-token>' };
+    const response = await fetch(url /*, { headers }*/);
+    if (!response.ok) throw new Error("Failed to fetch flows");
+    const flowJson = await response.json();
+    return flowJson;
+  }
 
   RED.nodes.registerType("function-gpt", FunctionGPTNode, {
     dynamicModuleList: "libs",
@@ -587,19 +598,38 @@ module.exports = function (RED) {
               config.model = req.body.config.model;
             }
           }
-          const flowContext = node.context().flow;
-          const flowKeys = flowContext.keys();
-          let flowInfo = "";
-          flowKeys.forEach((key) => {
-            const value = flowContext.get(key);
-            flowInfo += `"${key}": ${JSON.stringify(value)}\n`;
-          });
           const userPrompt = req.body.prompt || "";
-          let fullPrompt = `#Current Node-RED Flow Context:\n${
-            flowInfo.trim() ? flowInfo : "None"
-          }\n#User Prompt:\n${userPrompt}`;
+          let fullPrompt = `${USER_PROMPT}\n${userPrompt}`;
+          try {
+            const flowJson = await getFlowJson();
+            const flowId = node.z;
+            const currentTab = flowJson.find(
+              (n) => n.type === "tab" && n.id === flowId
+            );
+            const nodesInCurrentFlow = flowJson.filter((n) => n.z === flowId);
+            const currentFlowJson = [currentTab, ...nodesInCurrentFlow];
+            const flowJsonStr = JSON.stringify(currentFlowJson, null, 2);
+            fullPrompt += `\n${FLOW_CONTEXT}\n${flowJsonStr}`;
+          } catch (err) {
+            console.error("getFlowJson error\n", err);
+          }
+
+          console.log("fullPrompt\n", fullPrompt);
+
+          // const flowContext = node.context().flow;
+          // const flowKeys = flowContext.keys();
+          // let flowInfo = "";
+          // flowKeys.forEach((key) => {
+          //   const value = flowContext.get(key);
+          //   flowInfo += `"${key}": ${JSON.stringify(value)}\n`;
+          // });
+
+          // let fullPrompt = `#Current Node-RED Flow Context:\n${
+          //   flowInfo.trim() ? flowInfo : "None"
+          // }\n#User Prompt:\n${userPrompt}`;
           // console.log("fullPrompt\n", fullPrompt);
           // askGPT = function async(prompt, config, returnMsg = true)
+          console.log("fullPrompt\n", fullPrompt);
           const response = await node.openAiConfigIdNode.askGPT(
             // req.body.prompt,
             fullPrompt,

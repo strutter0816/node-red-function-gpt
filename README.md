@@ -56,15 +56,17 @@ You can select your preferred LLM provider, enter your API key, and choose a spe
 
 You can view the complete conversation history between the user and the LLM in a dedicated tab. This helps you track previous prompts and responses for better context and debugging.
 
-![picture 9](images/e3c59e3a5ad11a79843844ec058dd5dd7380f766ecbc2c8439c448b1b8c8d729.png)
+![picture 14](images/c7ba205cfe314616f7aa3b680771ab65a180fe5f033897bef9ded15ae9180e44.png)
 
-### Add flow context for the node
+### Add flow.json context for the node
 
-The node can automatically access and include the current flow context in each LLM request. This allows you to provide additional contextual information from your Node-RED flow, enabling more dynamic and intelligent responses.
+The node now automatically accesses and includes the current flow context in every LLM request. This enables the generation of more intelligent and context-aware responses based on real-time flow data.
 
-![picture 10](images/3598a99dacfc79005d4ed6eb62784b65a3ea33a756661d8246c183b681f8e4ee.png)
+![picture 12](images/1de0f1b9c8d1f47e83dd650988cf39993a7da0729087adec5e6ba242ffe0ce79.png)
 
-![picture 11](images/e4fb897f365e0a3e68ca4e91df3c59e87fa7ddf51a8f9acebb6c9098eba87ac6.png)
+**Note:** For user experience, the current flow context is not displayed in your conversation history.
+
+![picture 13](images/01c42f0a0cd6017982bb3006fb2ba943001e277ecddab0c5f2e0c1197040f40c.png)
 
 ### Inline Prompts
 
